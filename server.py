@@ -18,7 +18,9 @@ class MainHandler(tornado.web.RequestHandler):
                       access_token_key=constants.TWITTER_ACCESS_TOKEN,
                       access_token_secret=constants.TWITTER_ACCESS_TOKEN_SECRET)
     print api.VerifyCredentials()
-    self.write("Hello, world")
+    # self.write("Hello, world")
+    print self.request
+    self.render("main.html", api_key=constants.TWITTER_API_KEY)
 
 
 application = tornado.web.Application([

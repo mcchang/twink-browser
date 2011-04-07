@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>{% block title %}Default Title{% end %}</title>
+    <script src="http://platform.twitter.com/anywhere.js?id={{ api_key }}&v=1" type="text/javascript"></script>
+  </head>
+  <body>
+    {% block header %}<h1>DEFAULT HEADER</h1>{% end %}
+    {% block twitter_anywhere %}DEFAULT TWITTER ANYWHERE{% end %}
+    {% block content %}DEFAULT CONTENT{% end %}
+    {% block footer %}DEFAULT FOOTER{% end %}
+  </body>
+</html>
+
+

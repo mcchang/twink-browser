@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %} Twink {% end %}
+
+{% block twitter_anywhere %}
+  <script type="text/javascript">
+    twttr.anywhere(function (T) {
+      T.linkifyUsers();
+    });
+    twttr.anywhere(function (T) {
+      T.hovercards();
+    });
+    twttr.anywhere(function (T) {
+      T('#follow-xtrahotsauce').followButton("xtrahotsauce");
+    });
+    twttr.anywhere(function (T) {
+      T('#login').connectButton({ size: "small" });
+    });
+  </script>
+{% end %}
+
+{% block content %}
+  @xtrahotsauce<br />
+  Log in with Twitter to see your links!<span id="login"></span>
+{% end %}
+
+
+{% block footer %}
+  <span id="follow-xtrahotsauce"></span>
+{% end %}
