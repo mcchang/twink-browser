@@ -1,1 +1,4 @@
 *.swp
+constants.py
+todo.txt
+*.pyc
