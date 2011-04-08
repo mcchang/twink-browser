@@ -95,7 +95,8 @@ class AuthenticationHandler(BaseHandler, tornado.auth.TwitterMixin):
         if not self.database.get("SELECT * FROM users WHERE user='%s'" %
                            user["username"]):
             self.database.execute(
-                    "INSERT INTO users VALUES ('%s', '%s', '%s', '%s')" %
+                    "INSERT INTO users (user, user_id, access_key,"
+                    "access_secret) VALUES ('%s', '%s', '%s', '%s')" %
                     (access_token["screen_name"], access_token["user_id"],
                      access_token["key"], access_token["secret"]))
         self.set_secure_cookie("user", user["username"])

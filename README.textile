@@ -4,3 +4,4 @@ This a simple webapp that authenticates a user to Twitter and then presents the 
 
 h4. Dependencies
  * "twitter-text-python":https://github.com/BonsaiDen/twitter-text-python 
+ * mysqldb-python (for tornado.database)
