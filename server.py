@@ -1,11 +1,9 @@
 import constants
-import oauth2 as oauth
 import os
 import tornado.auth
 import tornado.httpclient
 import tornado.ioloop
 import tornado.web
-import twitter
 import urlparse
 
 PORT = 8080
@@ -36,12 +34,7 @@ class AuthenticationHandler(tornado.web.RequestHandler,
       raise tornado.web.HTTPError(500, "Twitter auth failed")
     print user["username"]
     print user["access_token"]
-    self.redirect('/')
-    api = twitter.Api(consumer_key=constants.TWITTER_CONSUMER_KEY,
-                      consumer_secret=constants.TWITTER_CONSUMER_SECRET,
-                      access_token_key=user["access_token"]["key"],
-                      access_token_secret=user["access_token"]["secret"])
-    print api.VerifyCredentials()
+    self.redirect('/display')
 
 class DisplayHandler(tornado.web.RequestHandler):
   def get(self):
