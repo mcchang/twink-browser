@@ -15,10 +15,16 @@
 
 {% block content %}
   Follow me: @xtrahotsauce<br />
-  <a href="/authenticate">
-    <img src={{ static_url("sign-in-with-twitter-button.png") }} alt="Sign In With Twitter" />
-  </a>
-  Log in with Twitter to see your links!<span id="login"></span>
+  {% if not current_user %}
+    <a href="/authenticate">
+      <img src={{ static_url("sign-in-with-twitter-button.png") }} alt="Sign In With Twitter" />
+    </a><br />
+  {% end %}
+  {% if links %}
+    {% for link in links %}
+      {{ modules.Link(link) }}
+    {% end %}
+  {% end %}
 {% end %}
 
 

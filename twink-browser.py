@@ -8,6 +8,8 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import ttp
+import uimodules
 
 from tornado.options import define, options
 
@@ -46,6 +48,7 @@ class Application(tornado.web.Application):
             twitter_consumer_key=options.twitter_consumer_key,
             twitter_consumer_secret=options.twitter_consumer_secret,
             cookie_secret=options.cookie_secret,
+            ui_modules=uimodules,
             xsrf_cookies=True,
             debug=True
         )
@@ -69,14 +72,44 @@ class BaseHandler(tornado.web.RequestHandler):
             return None
         return self.database.get("SELECT * FROM users WHERE user='%s'" % user)
 
+    def get_current_user_access(self):
+        if not self.current_user:
+            return None
+        _current_user = self.current_user
+        print _current_user["user"]
+        print _current_user["user_id"]
+        print _current_user["access_key"]
+        print _current_user["access_secret"]
+        return dict(username=_current_user["user"],
+                    user_id=_current_user["user_id"],
+                    key=_current_user["access_key"],
+                    secret=_current_user["access_secret"])
 
-class MainHandler(BaseHandler):
+
+class MainHandler(BaseHandler, tornado.auth.TwitterMixin):
+    @tornado.web.asynchronous
     def get(self):
         if not self.current_user:
-            self.render("main.html", api_key=options.twitter_api_key)
+            self.render("main.html",
+                        api_key=options.twitter_api_key,
+                        links=None)
             return
-        name = tornado.escape.xhtml_escape(self.current_user["user"])
-        self.write("Hello, " + name)
+        self.twitter_request(path = "/statuses/friends_timeline",
+                             access_token = self.get_current_user_access(),
+                             callback = self.async_callback(self.show_tweets),
+                             count = 200)
+
+    def show_tweets(self, tweets):
+        p = ttp.Parser()
+        links = []
+        for tweet in tweets:
+            result = p.parse(tweet["text"])
+            if result.urls:
+                print result.urls 
+                links.append(result.urls[0])
+        self.render("main.html",
+                    api_key = options.twitter_api_key,
+                    links = links)
 
 
 class AuthenticationHandler(BaseHandler, tornado.auth.TwitterMixin):
