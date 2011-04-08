@@ -1,4 +1,4 @@
 *.swp
-constants.py
+server.conf
 todo.txt
 *.pyc
