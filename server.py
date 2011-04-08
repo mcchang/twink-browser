@@ -23,6 +23,7 @@ define("twitter_consumer_secret", default="consumer_secret", help="twink-browser
 define("twitter_api_key", default="api_key", help="twink-browser twitter api key")
 define("cookie_secret", default="cookie secret", help="twink-browser cookie secret")
 
+
 class Application(tornado.web.Application):
   def __init__(self):
     handlers = [
@@ -59,6 +60,7 @@ class BaseHandler(tornado.web.RequestHandler):
       return None
     return self.db.get("SELECT * FROM users WHERE user='%s'" % user)
 
+
 class MainHandler(BaseHandler):
   def get(self):
     if not self.current_user:
@@ -66,6 +68,7 @@ class MainHandler(BaseHandler):
       return
     name = tornado.escape.xhtml_escape(self.current_user["user"])
     self.write("Hello, " + name)
+
 
 class AuthenticationHandler(BaseHandler,
                             tornado.auth.TwitterMixin):
@@ -90,14 +93,19 @@ class AuthenticationHandler(BaseHandler,
     self.set_secure_cookie("user", user["username"])
     self.redirect('/')
 
+
 class DisplayHandler(tornado.web.RequestHandler):
   def get(self):
     print "DISPLAY"
 
-if __name__ == "__main__":
+
+def main():
   tornado.options.parse_config_file("server.conf")
   tornado.options.parse_command_line()
   http_server = tornado.httpserver.HTTPServer(Application())
   http_server.listen(options.port)
   tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == "__main__":
+  main()
 
