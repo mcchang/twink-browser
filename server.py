@@ -18,35 +18,34 @@ settings = {
 class MainHandler(tornado.web.RequestHandler):
   def get(self):
     print "GET"
-    # self.write("Hello, world")
     self.render("main.html", api_key=constants.TWITTER_API_KEY)
 
-  def post(self):
-    print "POST"
-    print self.request
-    bridge_code = self.get_argument("bridge_code")
+  # def post(self):
+  #   print "POST"
+  #   print self.request
+  #   bridge_code = self.get_argument("bridge_code")
 
-    client = tornado.httpclient.HTTPClient()
-    body = util.EncodePostData({'oauth_bridge_code': bridge_code})
-    print "BODY: ", body
-    consumer = oauth.Consumer(key=constants.TWITTER_CONSUMER_KEY,
-                              secret=constants.TWITTER_CONSUMER_SECRET)
-    access_token_url = "https://api.twitter.com/oauth/access_token"
-    client = oauth.Client(consumer)
-    resp, content = client.request(access_token_url, method="POST", body=body)
-    # TODO check response to see if its 404 or something
-    print "RESP: ", resp
-    print "CONTENT: ", content
-    # content = content.split('&')
-    # pair =dict([(pair.split('=')[0], pair.split('=')[1]) for pair in content.split('&')])
-    content = urlparse.parse_qs(content)
-    content = dict([(k, v[0]) for k, v in content.items()])
-    print content
-    api = twitter.Api(consumer_key=constants.TWITTER_CONSUMER_KEY,
-                      consumer_secret=constants.TWITTER_CONSUMER_SECRET,
-                      access_token_key=content["oauth_token"],
-                      access_token_secret=content["oauth_token_secret"])
-    print api.VerifyCredentials()
+  #   client = tornado.httpclient.HTTPClient()
+  #   body = util.EncodePostData({'oauth_bridge_code': bridge_code})
+  #   print "BODY: ", body
+  #   consumer = oauth.Consumer(key=constants.TWITTER_CONSUMER_KEY,
+  #                             secret=constants.TWITTER_CONSUMER_SECRET)
+  #   access_token_url = "https://api.twitter.com/oauth/access_token"
+  #   client = oauth.Client(consumer)
+  #   resp, content = client.request(access_token_url, method="POST", body=body)
+  #   # TODO check response to see if its 404 or something
+  #   print "RESP: ", resp
+  #   print "CONTENT: ", content
+  #   # content = content.split('&')
+  #   # pair =dict([(pair.split('=')[0], pair.split('=')[1]) for pair in content.split('&')])
+  #   content = urlparse.parse_qs(content)
+  #   content = dict([(k, v[0]) for k, v in content.items()])
+  #   print content
+  #   api = twitter.Api(consumer_key=constants.TWITTER_CONSUMER_KEY,
+  #                     consumer_secret=constants.TWITTER_CONSUMER_SECRET,
+  #                     access_token_key=content["oauth_token"],
+  #                     access_token_secret=content["oauth_token_secret"])
+  #   print api.VerifyCredentials()
 
     # request = tornado.httpclient.HTTPRequest("https://api.twitter.com/oauth/access_token", method="POST", body=body)
     # try:
@@ -56,10 +55,23 @@ class MainHandler(tornado.web.RequestHandler):
     # except tornado.httpclient.HTTPError, e:
     #   print "ERROR: ", e
 
+class AuthenticationHandler(tornado.web.RequestHandler):
+  def get(self):
+    self.redirect(util.GetAuthenticationURL())
+
+class AuthenticatedHandler(tornado.web.RequestHandler):
+  def get(self):
+    oauth_verifier = self.get_argument("oauth_verifier")
+
+    
+
+
 
 
 application = tornado.web.Application([
   (r"/", MainHandler),
+  (r"/authenticate", AuthenticationHandler),
+  (r"/authenticated", AuthenticatedHandler)
 ], **settings)
 
 if __name__ == "__main__":

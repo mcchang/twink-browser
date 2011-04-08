@@ -10,24 +10,14 @@
     twttr.anywhere(function (T) {
       T.hovercards();
     });
-    twttr.anywhere(function (T) {
-      T('#follow-xtrahotsauce').followButton("xtrahotsauce");
-    });
-    twttr.anywhere(function (T) {
-      T('#login').connectButton({
-        authComplete: function(user, bridge_code) {
-          $.post('/', {
-            'bridge_code': bridge_code
-          });
-        }, 
-        size: "small" });
-    });
   </script>
 {% end %}
 
 {% block content %}
-  @xtrahotsauce<br />
-  <a href="https://oauth.twitter.com/2/authorize?oauth_callback_url=http://127.0.0.1:8080&oauth_mode=flow_web_client&oauth_client_identifier={{ api_key }}">Sign in here</a>
+  Follow me: @xtrahotsauce<br />
+  <a href="/authenticate">
+    <img src="/static/sign-in-with-twitter-button.png" alt="Sign In With Twitter" />
+  </a>
   Log in with Twitter to see your links!<span id="login"></span>
 {% end %}
 
