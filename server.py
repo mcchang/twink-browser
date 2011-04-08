@@ -68,6 +68,7 @@ class MainHandler(BaseHandler):
       return
     name = tornado.escape.xhtml_escape(self.current_user["user"])
     self.write("Hello, " + name)
+    
 
 
 class AuthenticationHandler(BaseHandler,
