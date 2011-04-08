@@ -2,6 +2,7 @@ import base64
 import constants
 import os
 import tornado.auth
+import tornado.database
 import tornado.httpclient
 import tornado.ioloop
 import tornado.web
@@ -43,8 +44,17 @@ class AuthenticationHandler(BaseHandler,
   def _on_auth(self, user):
     if not user:
       raise tornado.web.HTTPError(500, "Twitter auth failed")
-    print user["username"]
-    print user["access_token"]
+    # print user["username"]
+    # print user["access_token"]
+    access_token = user["access_token"]
+    db = tornado.database.Connection("localhost", "twink-browser", user=constants.MYSQL_USER, password=constants.MYSQL_PASSWORD)
+    if not db.get("SELECT * FROM users WHERE user='%s'" % user["username"]):
+      db.execute("INSERT INTO users VALUES ('%s', '%s', '%s', '%s')" % (access_token["screen_name"],
+                                                                        access_token["user_id"],
+                                                                        access_token["key"],
+                                                                        access_token["secret"]
+                                                                       ))
+    db.close()
     self.set_secure_cookie("user", user["username"])
     self.redirect('/')
 
