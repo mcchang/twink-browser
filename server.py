@@ -1,3 +1,4 @@
+import base64
 import constants
 import os
 import tornado.auth
@@ -5,6 +6,7 @@ import tornado.httpclient
 import tornado.ioloop
 import tornado.web
 import urlparse
+import uuid
 
 PORT = 8080
 
@@ -12,15 +14,24 @@ settings = {
   "static_path": os.path.join(os.path.dirname(__file__), "static"),
   "twitter_consumer_key": constants.TWITTER_CONSUMER_KEY,
   "twitter_consumer_secret": constants.TWITTER_CONSUMER_SECRET,
+  "cookie_secret": base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes),
+  "xsrf_cookies": True,
   "debug": True
 }
 
-class MainHandler(tornado.web.RequestHandler):
-  def get(self):
-    print "GET"
-    self.render("main.html", api_key=constants.TWITTER_API_KEY)
+class BaseHandler(tornado.web.RequestHandler):
+  def get_current_user(self):
+    return self.get_secure_cookie("user")
 
-class AuthenticationHandler(tornado.web.RequestHandler,
+class MainHandler(BaseHandler):
+  def get(self):
+    if not self.current_user:
+      self.render("main.html", api_key=constants.TWITTER_API_KEY)
+      return
+    name = tornado.escape.xhtml_escape(self.current_user)
+    self.write("Hello, " + name)
+
+class AuthenticationHandler(BaseHandler,
                             tornado.auth.TwitterMixin):
   @tornado.web.asynchronous
   def get(self):
@@ -34,7 +45,8 @@ class AuthenticationHandler(tornado.web.RequestHandler,
       raise tornado.web.HTTPError(500, "Twitter auth failed")
     print user["username"]
     print user["access_token"]
-    self.redirect('/display')
+    self.set_secure_cookie("user", user["username"])
+    self.redirect('/')
 
 class DisplayHandler(tornado.web.RequestHandler):
   def get(self):
