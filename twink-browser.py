@@ -10,6 +10,7 @@ import tornado.options
 import tornado.web
 import ttp
 import uimodules
+import urllib
 
 from tornado.options import define, options
 
@@ -76,10 +77,6 @@ class BaseHandler(tornado.web.RequestHandler):
         if not self.current_user:
             return None
         _current_user = self.current_user
-        print _current_user["user"]
-        print _current_user["user_id"]
-        print _current_user["access_key"]
-        print _current_user["access_secret"]
         return dict(username=_current_user["user"],
                     user_id=_current_user["user_id"],
                     key=_current_user["access_key"],
@@ -105,7 +102,7 @@ class MainHandler(BaseHandler, tornado.auth.TwitterMixin):
         for tweet in tweets:
             result = p.parse(tweet["text"])
             if result.urls:
-                print result.urls 
+                # print result.urls 
                 links.append(result.urls[0])
         self.render("main.html",
                     api_key = options.twitter_api_key,
@@ -137,8 +134,19 @@ class AuthenticationHandler(BaseHandler, tornado.auth.TwitterMixin):
 
 
 class DisplayHandler(tornado.web.RequestHandler):
+    # TODO: do these need to be authenticated?
     def get(self):
-        print "DISPLAY"
+        print "DISPLAY_GET"
+
+    def post(self):
+        print "DISPLAY_POST"
+        url = self.get_argument("url")
+        print url
+        sock = urllib.urlopen(url)
+        html = sock.read()
+        sock.close()
+        print html
+        self.write(html)
 
 
 def main():
