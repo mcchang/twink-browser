@@ -34,7 +34,7 @@
   </script>
 {% end %}
 
-{% block twitter_anywhere %}
+{% block twitter_anywhere_js %}
   <script type="text/javascript">
     twttr.anywhere(function (T) {
       T.linkifyUsers();
@@ -52,11 +52,15 @@
       <img src={{ static_url("sign-in-with-twitter-button.png") }} alt="Sign In With Twitter" />
     </a><br />
   {% end %}
-  {% if links %}
-    {% for link in links %}
-      {{ modules.Link(link) }}
+  <div class="links">
+    {% if links %}
+      <ul>
+      {% for link in links %}
+        {{ modules.Link(link) }}
+      {% end %}
+      </ul>
     {% end %}
-  {% end %}
+  </div>
   <div id="display"></div>
 {% end %}
 
