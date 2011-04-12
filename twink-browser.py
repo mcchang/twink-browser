@@ -107,7 +107,7 @@ class MainHandler(BaseHandler, tornado.auth.TwitterMixin):
                 # print links
         self.render("main.html",
                     api_key = options.twitter_api_key,
-                    links = links)
+                    links = links if links else None)
 
 
 class AuthenticationHandler(BaseHandler, tornado.auth.TwitterMixin):
