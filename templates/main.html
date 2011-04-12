@@ -9,28 +9,31 @@
         return r ? r[1] : undefined;
     }
 
+    function display(url) {
+      var args = new Object();
+      args._xsrf = getCookie("_xsrf");
+      args.url = url;
+      $.ajax({
+        type: "POST",
+        url: "display",
+        data: $.param(args),
+        datatype: "html",
+        success: function(data){
+          $("#display").html(data);
+        }
+      })
+    }
 
     $(document).ready(function () {
-        // $("#sup").load("http://www.yahoo.com", function () {
-        //   console.log("HERRO");
-        // });
-        // $("#sup").attr("src", "http://www.yahoo.com");
-        var args = new Object();
-        args._xsrf = getCookie("_xsrf");
-        args.url = "http://www.yahoo.com";
-        $.ajax({
-          type: "POST",
-          url: "display",
-          data: $.param(args),
-          datatype: "html",
-          success: function(data){
-            $("#display").html(data);
-            alert("load performed");
-          }
-        })
+      $(".link").click(function() {
+        console.log("hello");
+        display($(this).html());
+        console.log("bye");
+      });
     });
   </script>
 {% end %}
+
 {% block twitter_anywhere %}
   <script type="text/javascript">
     twttr.anywhere(function (T) {
